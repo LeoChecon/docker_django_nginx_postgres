@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html>
+    {% load static %}
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{% static 'new_app/styles/reset.css' %} ">
+        <link rel="stylesheet" href="{% static 'new_app/styles/default.css' %} ">
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
     </head>
     <body>
-        <h1>This is my containarized django app!</h1>
-        <a id='btn-custom' href="{% url 'CreatePost' %}">A custom btn</a>
-        {% block content %}
-        <h3>Btn clicks...</h3>
-        <ul>
-            {% for post in post_list %}
-                <li>
-                    {{post.time_stamp}}
-                </li>
-            {% endfor %}
-        </ul>
-        {% endblock content %}
+        <div class="container center-text">
+            <h1>Hello World</h1>
+            <h2>This is my containarized django app!</h2>
+            <a id='btn-custom' href="{% url 'HelloWorld' %}">Refresh page</a>
+        </div>
+        <div class="container">
+            {% block content %}
+            <h3>Visit list...</h3>
+            <ul>
+                {% for visit in visit_list %}
+                    <li>
+                        {{visit.time_stamp}}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% endblock content %}
+        </div>
     </body>
 </html>

@@ -1,15 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .models import Postagens
+from .models import Visits
 
 
 def hello_world(request):
-    post_list = Postagens.objects.all()
+    Visits.objects.create()
+    visit_list = Visits.objects.all()
     return render(request, 'hello_world.html', context={
-        "post_list": post_list
+        "visit_list": visit_list
     })
-
-def create_post(request):
-    Postagens.objects.create()
-    return hello_world(request)

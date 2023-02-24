@@ -1,0 +1,47 @@
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    color: #252525;
+}
+h1 {
+    font-size: 36px;
+    font-weight: 600;
+    padding: 10px 5px;
+}
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    padding: 10px 5px;
+}
+h3 {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 5px;
+}
+.container {
+    margin: 0 auto;
+    margin-bottom: 20px;
+    width: 70%;
+    border-radius: 15px;
+    border: none solid black;
+    box-shadow: 5px 10px 5px 0px rgba(0,0,0,0.17);
+    -webkit-box-shadow: 5px 10px 5px 0px rgba(0,0,0,0.17);
+    -moz-box-shadow: 5px 10px 5px 0px rgba(0,0,0,0.17);
+    padding: 30px 20px;
+    background-color: #f3f3f3;
+}
+.center-text{
+    text-align: center;
+}
+a, a:link, a:visited {
+    color: rgb(172, 46, 0);
+    text-decoration: none;
+}
+a:hover, a:active{
+    color: rgb(127, 32, 216);
+}
+li {
+    margin-left: 30px;
+    padding: 3px 7px 0px 7px;
+    list-style: circle;
+}
