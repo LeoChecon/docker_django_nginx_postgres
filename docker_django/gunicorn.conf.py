@@ -1,0 +1,10 @@
+wsgi_app = "docker_django.wsgi:application"
+chdir = "/home/django/docker_django"
+pidfile = "/var/run/gunicorn/gunicorn.pid"
+work_tmp_dir = "/dev/shm"
+accesslog = "-"
+errorlog = "-"
+user = 101
+group = 101
+bind = ["0.0.0.0:8000"]
+workers = 2

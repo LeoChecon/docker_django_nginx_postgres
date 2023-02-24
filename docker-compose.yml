@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+  database:
+    image: database_ctn
+    build:
+      context: .
+      dockerfile: _postgres.Dockerfile
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - internal
+    volumes:
+      - db:/var/lib/postgres/data
+    secrets:
+      - db_password
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=docker_django_db
+    ports:
+      - 5555:5432
+    user: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pg_isready", "-d", "docker_django_db"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  webserver:
+    image: webserver_ctn
+    build: 
+      context: .
+      dockerfile: _nginx.Dockerfile
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 45s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - internal
+      - public
+    ports:
+      - 8080:80
+    depends_on:
+      - django
+  django:
+    image: django_ctn
+    build: 
+      context: .
+      dockerfile: _django.Dockerfile
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - internal
+    ports:
+      - 8000
+    environment:
+      - USE_SQLITE_DB=True # Makes django use sqlite db
+      - USE_CONTAINER_POSTGRES_DB=False # Makes django use postgres db of 'database' service
+    depends_on:
+      # - database    # docker swarm
+      database:   # docker compose
+        condition: service_healthy
+volumes:
+  db:
+networks:
+  internal:
+    # driver: overlay   # docker swarm
+  public:
+    # driver: overlay   # docker swarm
+secrets:
+  db_password:
+    file: ./db_password.txt
+      
