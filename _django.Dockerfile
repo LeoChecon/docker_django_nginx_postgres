@@ -21,10 +21,6 @@ RUN pip install -r ./requirements.txt \
 	&& chown -R django:django /var/run/gunicorn \
 	&& chown -R django:django /home/django
 
-# Testing connection utils...
-# RUN apt update -y \
-# 	&& apt install -y iputils-ping
-
 WORKDIR /home/django/docker_django
 
 ENV USE_CONTAINER_DB=False
@@ -34,6 +30,6 @@ ENV USE_CONTAINER_DB=False
 
 EXPOSE 8000
 
-# USER django
+USER django
 
 ENTRYPOINT [ "/bin/bash", "django_entrypoint.sh" ]

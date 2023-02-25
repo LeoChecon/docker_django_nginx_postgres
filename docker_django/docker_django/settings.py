@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'docker_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if (os.environ.get('USE_CONTAINER_DB', True)):
+if (os.environ.get('USE_CONTAINER_DB', False)):
 
     database_name = read_secret(os.environ.get('DATABASE_NAME_FILE', False))
     database_user = read_secret(os.environ.get('DATABASE_USER_FILE', False))

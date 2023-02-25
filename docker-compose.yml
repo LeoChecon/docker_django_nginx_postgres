@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
   database:
@@ -26,14 +26,14 @@ services:
       - POSTGRES_USER_FILE=/run/secrets/database_user
       - POSTGRES_PASSWORD_FILE=/run/secrets/database_password
     ports:
-      - 5555:5432
-    # user: postgres
-    # healthcheck:
-    #   test: ["CMD-SHELL", "/usr/bin/pg_isready", "-d", "docker_django_db"]
-    #   interval: 30s
-    #   timeout: 5s
-    #   retries: 10
-    #   start_period: 10s
+      - 5555:5432     # binds port 5555 to allow dbms access to postgres database
+    user: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pg_isready", "-d", "docker_django_db"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
   webserver:
     image: webserver_ctn
     build: 
@@ -83,16 +83,17 @@ services:
       - DJANGO_KEY_FILE=/run/secrets/django_key
       - USE_CONTAINER_DB=True # True (default) => Use 'database' service  | False => Use SQLite 
     depends_on:
-      - database    # docker swarm
-      # database:   # docker compose
+      - database    # swarm mode sintax
+      # - - - - - - O R - - - - - - - - 
+      # database:   # docker compose up sintax
       #   condition: service_healthy
 volumes:
   db:
 networks:
   internal:
-    driver: overlay   # docker swarm
+    driver: overlay   # required for swarm mode | comment this line if running 'docker compose up'
   public:
-    driver: overlay   # docker swarm
+    driver: overlay   # required for swarm mode | comment this line if running 'docker compose up'
 secrets:
   database_password:
     file: secret_files/database_password.txt
