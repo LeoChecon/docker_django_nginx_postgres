@@ -23,4 +23,9 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('new_app.urls'))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+if (settings.DEBUG):
+    # DEBUG = True
+    # Serve static files directly  (development mode)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

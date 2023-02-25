@@ -13,21 +13,30 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+
+# Use this function do read the docker secret files
+def read_secret(secret_file):
+    if(secret_file):
+        with open(secret_file) as f:
+            secret_txt = f.readline()
+        return secret_txt
+    else:
+        return False
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=o5f2mpfj9+804tpvdw!!)nuqvcbfu44$+fsg)*m^o^x7&as26'
+django_key = read_secret(os.environ.get('DJANGO_KEY_FILE',False))
+SECRET_KEY = django_key or 'django-insecure-=o5f2mpfj9+804tpvdw!!)nuqvcbfu44$+fsg)*m^o^x7&as26'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost']
 
 # Application definition
 
@@ -77,30 +86,27 @@ WSGI_APPLICATION = 'docker_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# Default: Using postgres db at localhost
-default_database_config = {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'docker_django_db',
-    'USER': 'myuser',
-    'PASSWORD': 'expect10',
-    'HOST': 'localhost',
-    'PORT': 5432
-}
+if (os.environ.get('USE_CONTAINER_DB', True)):
 
-if (os.environ.get('USE_CONTAINER_POSTGRES_DB', False)):
+    database_name = read_secret(os.environ.get('DATABASE_NAME_FILE', False))
+    database_user = read_secret(os.environ.get('DATABASE_USER_FILE', False))
+    database_password = read_secret(os.environ.get('DATABASE_PASSWORD_FILE', False))
+        
+    # Default: Using postgres 
     default_database_config = {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'docker_django_db',
-        'USER': 'myuser',
-        'PASSWORD': 'expect10',
-        'HOST': 'database',
+        'NAME': database_name or 'djangodb',
+        'USER': database_user or 'postgres',
+        'PASSWORD': database_password or 'postgres',
+        'HOST': 'database', # swarm service name
         'PORT': 5432
     }
-elif (os.environ.get('USE_SQLITE_DB', False)):
+else:
     default_database_config = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+
 
 DATABASES = {
     'default': default_database_config

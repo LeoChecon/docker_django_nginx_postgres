@@ -9,10 +9,10 @@ RUN addgroup --system --gid 101 django \
 WORKDIR /home/django
 
 # Copy requirements.txt file to image
-COPY ./requirements.txt .
+COPY ["requirements.txt", "."]
 
 # Copy app folder to image
-COPY docker_django/ docker_django/
+COPY ["docker_django/", "docker_django/"]
 
 # Install gunicorn and app's requirements 
 RUN pip install -r ./requirements.txt \
@@ -21,13 +21,19 @@ RUN pip install -r ./requirements.txt \
 	&& chown -R django:django /var/run/gunicorn \
 	&& chown -R django:django /home/django
 
+# Testing connection utils...
+# RUN apt update -y \
+# 	&& apt install -y iputils-ping
 
 WORKDIR /home/django/docker_django
 
-ENV USE_SQLITE_DB=True
+ENV USE_CONTAINER_DB=False
+# [ docker compose or swarm mode ] True => Use 'database' service
+# [ single container ] False => Use SQLite 
+# 		-> This environment variable is overwrite to TRUE by default when running docker-compose.yml file
 
 EXPOSE 8000
 
-USER django
+# USER django
 
 ENTRYPOINT [ "/bin/bash", "django_entrypoint.sh" ]

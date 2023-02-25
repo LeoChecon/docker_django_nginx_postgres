@@ -16,27 +16,33 @@ services:
     networks:
       - internal
     volumes:
-      - db:/var/lib/postgres/data
+      - db:/var/lib/postgresql/data
     secrets:
-      - db_password
+      - database_name
+      - database_user
+      - database_password
     environment:
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
-      - POSTGRES_DB=docker_django_db
+      - POSTGRES_DB_FILE=/run/secrets/database_name
+      - POSTGRES_USER_FILE=/run/secrets/database_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/database_password
     ports:
       - 5555:5432
-    user: postgres
-    healthcheck:
-      test: ["CMD-SHELL", "/usr/bin/pg_isready", "-d", "docker_django_db"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+    # user: postgres
+    # healthcheck:
+    #   test: ["CMD-SHELL", "/usr/bin/pg_isready", "-d", "docker_django_db"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 10
+    #   start_period: 10s
   webserver:
     image: webserver_ctn
     build: 
       context: .
       dockerfile: _nginx.Dockerfile
+    volumes:
+      - type: bind
+        target: /opt/static/
+        source: docker_django/static/
     deploy:
       replicas: 1
       restart_policy:
@@ -65,23 +71,34 @@ services:
         window: 120s
     networks:
       - internal
-    ports:
-      - 8000
+    secrets:
+      - database_name
+      - database_user
+      - database_password
+      - django_key
     environment:
-      - USE_SQLITE_DB=True # Makes django use sqlite db
-      - USE_CONTAINER_POSTGRES_DB=False # Makes django use postgres db of 'database' service
+      - DATABASE_NAME_FILE=/run/secrets/database_name
+      - DATABASE_USER_FILE=/run/secrets/database_user
+      - DATABASE_PASSWORD_FILE=/run/secrets/database_password
+      - DJANGO_KEY_FILE=/run/secrets/django_key
+      - USE_CONTAINER_DB=True # True (default) => Use 'database' service  | False => Use SQLite 
     depends_on:
-      # - database    # docker swarm
-      database:   # docker compose
-        condition: service_healthy
+      - database    # docker swarm
+      # database:   # docker compose
+      #   condition: service_healthy
 volumes:
   db:
 networks:
   internal:
-    # driver: overlay   # docker swarm
+    driver: overlay   # docker swarm
   public:
-    # driver: overlay   # docker swarm
+    driver: overlay   # docker swarm
 secrets:
-  db_password:
-    file: ./db_password.txt
-      
+  database_password:
+    file: secret_files/database_password.txt
+  database_user:
+    file: secret_files/database_user.txt
+  database_name:
+    file: secret_files/database_name.txt
+  django_key:
+    file: secret_files/django_key.txt
