@@ -91,9 +91,9 @@ volumes:
   db:
 networks:
   internal:
-    driver: overlay   # required for swarm mode | comment this line if running 'docker compose up'
+    # driver: overlay   # required for swarm mode | comment this line if running 'docker compose up'
   public:
-    driver: overlay   # required for swarm mode | comment this line if running 'docker compose up'
+    # driver: overlay   # required for swarm mode | comment this line if running 'docker compose up'
 secrets:
   database_password:
     file: secret_files/database_password.txt
