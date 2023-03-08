@@ -29,3 +29,8 @@ if (settings.DEBUG):
     # DEBUG = True
     # Serve static files directly  (development mode)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if(settings.DATABASES['default']['ENGINE']=='django.db.backends.sqlite3'):
+    # DEBUG = False, but using SQLite in local development
+    # Serve static files directly   (development mode)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

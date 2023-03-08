@@ -46,9 +46,11 @@ Após clonar o repositório para a pasta desejada do seu computador abra um prom
 1. Instale a biblioteca `pipenv` do python (https://pipenv.pypa.io/en/latest/index.html)
 2. Inicie um ambiente virtual: `pipenv shell`
 3. Instale as dependências do projeto: `pipenv install`;
-4. Mude de diretório para a pastas docker_django e inicie o servidor de desenvolvimento do `django`: `python manage.py runserver`
+4. Mude de diretório para a pastas docker_django e inicie o servidor de desenvolvimento do `django`: `python manage.py runserver --insecure`
 
 *No modo de desenvolvimento optamos por utilizar como banco de dados o Sqlite3 a fim de não exigir que você tenha que baixar uma versão do Postgres na sua máquina.*
+
+*A flag `--insecure` é exigida para permitir que o servidor web do django exiba as `static files` quando no arquivo `settings.py` o valor de `DEBUG` está settado como `False`*
 
 ### Modo produção com docker compose
 
